@@ -134,81 +134,111 @@ inOrder = [LeftTree][ROOT][RightTree]
  
  */
 
-public class TreeNode {
-    public var val: Int
-    public var left: TreeNode?
-    public var right: TreeNode?
-    public init(_ val: Int) {
-        self.val = val
-        self.left = nil
-        self.right = nil
-    }
-}
+//public class TreeNode {
+//    public var val: Int
+//    public var left: TreeNode?
+//    public var right: TreeNode?
+//    public init(_ val: Int) {
+//        self.val = val
+//        self.left = nil
+//        self.right = nil
+//    }
+//}
 
 
 // Exercise 1
 
-class structure{
-    var root: Int
-    var left: [Int]?
-    var right: [Int]?
-
-    init(_ rootValue: Int) {
-        self.root = rootValue
-        self.left = nil
-        self.right = nil
-    }
-    
-}
-
 //Pre-order: 50 30 20 40 35 70 60 65 80 75 85 90
 //In-order: 20 30 35 40 50 60 65 70 75 80 85 90
 
-func getPostorderArray(pre: [Int], inord: [Int]) -> [Int] {
+
+
+class Node {
+    var value: Int
+    var left: Node?
+    var right: Node?
     
-    var preorderArray = pre
-    var inorderArray = inord
-    
-    var leftNodes: [Int] = []
-    var rightNodes: [Int] = []
-    
-    
-    
-    return []
+    init (value: Int) {
+        self.value = value
+    }
 }
 
-func getLeft(){
+class BTree {
     
-}
-
-func getRighgt(){
+    var preIndex = 0
+    var postIndex = 10
     
-}
-
-func findRootIndex(in array: [Int], rootValue: Int) -> Int {
-    for i in 0..<array.count {
-        if array[i] == rootValue {
-            return i
+    func buildTree(inorder: [Int], preorder: [Int], inStart: Int, inEnd: Int) -> Node? {
+        
+        if inStart > inEnd {
+            return nil
+        }
+        
+        let tNode = Node(value: preorder[preIndex])
+        preIndex += 1
+        
+        if inStart == inEnd {
+            return tNode
+        } else {
+            let inIndex = search(arr: inorder, start: inStart, end: inEnd, value: tNode.value)
+            tNode.left = buildTree(inorder: inorder, preorder: preorder, inStart: inStart, inEnd: inIndex - 1)
+            tNode.right = buildTree(inorder: inorder, preorder: preorder, inStart: inIndex + 1, inEnd: inEnd)
+            return tNode
         }
     }
-    return -1
+    
+    func buildTree(inorder: [Int], postorder: [Int], inStart: Int, inEnd: Int) -> Node? {
+        if inStart > inEnd {
+            return nil
+        }
+        
+        let tNode = Node(value: postorder[postIndex])
+        postIndex -= 1
+        
+        if inStart == inEnd {
+            return tNode
+        } else {
+            let inIndex = search(arr: inorder, start: inStart, end: inEnd, value: tNode.value)
+            tNode.left = buildTree(inorder: inorder, postorder: postorder, inStart: inStart, inEnd: inIndex - 1)
+            tNode.right = buildTree(inorder: inorder, postorder: postorder, inStart: inIndex + 1, inEnd: inEnd )
+            return tNode
+        }
+    }
+    
+    func search(arr: [Int], start: Int, end: Int, value: Int) -> Int {
+        for i in start...end {
+            if arr[i] == value {
+                return i
+            }
+        }
+        return start
+    }
+    
+    func printOrder(node: Node?) {
+        if let n = node {
+            print (n.value)
+            printOrder(node: n.left)
+            printOrder(node: n.right)
+        }
+    }
+    
 }
 
+let bTree = BTree()
+
+//let preOrder: [Int] = [50, 30, 20, 40, 35, 70, 60, 65, 80, 75, 85, 90]
+//let inorder: [Int] = [20, 30, 35, 40, 50, 60, 65, 70, 75, 80, 85, 90]
 
 
-// Exercise 2
-func getPreorderArray(post: [Int], in: [Int]) -> [Int] {
-    
-    
-    
-    
-    return []
-}
+let inorder: [Int] = [35, 40, 50, 60, 70, 75, 80, 85, 90, 95, 97 ]
+let postorder: [Int] = [35, 40, 60, 75, 97, 95, 90, 85, 80, 70, 50]
+
+let count: Int = inorder.count
 
 
+//let root = bTree.buildTree(inorder: inorder, preorder: preOrder, inStart: 0, inEnd: count - 1)
+//bTree.printOrder(node: root)
 
-// TEST
-
-
-
+let root = bTree.buildTree(inorder: inorder, postorder: postorder, inStart: 0, inEnd: count - 1)
+bTree.printOrder(node: root)
 
